@@ -23,43 +23,42 @@ uninstall updates, change save data, or alter the installed game content.
 
 ## Setup
 
-In PowerShell, point the script at your ns2jb checkout and the active run
-directory. Replace `RUNID` with the folder name printed by ns2jb:
+In a terminal, point the script at your ns2jb checkout and active run directory. Replace `RUNID` with the folder name printed by ns2jb:
 
-```powershell
-$env:NS2JB_ROOT = 'C:\Users\Cainan\Documents\ns2jb\ns2jb'
-$env:NS2_RUN_DIR = Join-Path $env:NS2JB_ROOT 'runs\switch2-RUNID'
+```sh
+export NS2JB_ROOT="/path/to/ns2jb"
+export NS2_RUN_DIR="$NS2JB_ROOT/runs/switch2-RUNID"
 ```
 
 If this file is placed at
-`<ns2jb checkout>\engine\switch2\app\reset-launch-version.cjs`, the
+`<ns2jb checkout>/engine/switch2/app/reset-launch-version.cjs`, the
 `NS2JB_ROOT` setting can be omitted.
 
 ## Usage
 
 Preview all application records known to NS (no version records are changed):
 
-```powershell
-node .\reset-launch-version.cjs --all
+```sh
+node ./reset-launch-version.cjs --all
 ```
 
 Reset all those titles to version code `0` (`1.0.0`):
 
-```powershell
-node .\reset-launch-version.cjs --all --apply
+```sh
+node ./reset-launch-version.cjs --all --apply
 ```
 
 To process one title, provide its 16-digit hexadecimal application ID:
 
-```powershell
-node .\reset-launch-version.cjs 0100000000001000 --apply
+```sh
+node ./reset-launch-version.cjs 0100000000001000 --apply
 ```
 
 The default target version is `0`. `--version <number>` can select another
 uint32 version code. `--apply` is required to write changes; omitting it leaves
 the operation in preview mode. The script prints the application IDs and
 results as JSON. For applied runs, it also writes a progress record under
-`<run directory>\switch2\launch-version-reset-*.json`.
+`<run directory>/switch2/launch-version-reset-*.json`.
 
 `--all` means every application record returned by NS on that console, not
 every title ever released. Review the preview before applying if you only
