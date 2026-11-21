@@ -42,6 +42,7 @@ jobs:
       - name: Move latest tag to this build
         shell: bash
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git tag --force latest "$GITHUB_SHA"
           git push --force origin refs/tags/latest
 

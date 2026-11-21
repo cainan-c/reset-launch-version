@@ -41,7 +41,6 @@ TARGET := reset-launch-version
 APP_TITLE := Reset Launch Version
 APP_AUTHOR := Cainan
 APP_VERSION ?= $(shell date -u +%Y-%m-%d)
-NO_ICON := 1
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
