@@ -48,15 +48,8 @@ static const PlSharedFontType g_font_order[] = {
 };
 
 static void format_version(u32 version, char *output, size_t output_size) {
-    const unsigned major = (version >> 26) & 0x3f;
-    const unsigned minor = (version >> 20) & 0x3f;
-    const unsigned micro = (version >> 16) & 0x0f;
-    const unsigned revision = version & 0xffff;
-
-    if (revision)
-        snprintf(output, output_size, "%u.%u.%u+%u", major, minor, micro, revision);
-    else
-        snprintf(output, output_size, "%u.%u.%u", major, minor, micro);
+    const u32 update_number = version / 65536;
+    snprintf(output, output_size, "%u", update_number);
 }
 
 static void format_title_id(u64 application_id, char *output, size_t output_size) {
@@ -453,7 +446,7 @@ static void draw_ui(void) {
     draw_text(pixels, 40, 86, UI_MUTED, subtitle, 700);
     draw_text(pixels, 40, 132, UI_MUTED, "TITLE NAME", 580);
     draw_text(pixels, 680, 132, UI_MUTED, "TITLE ID", 280);
-    draw_text(pixels, 1010, 132, UI_MUTED, "LAUNCH VERSION", 240);
+    draw_text(pixels, 1010, 132, UI_MUTED, "UPDATE", 240);
     fill_rect(pixels, 40, 146, 1200, 2, RGBA8_MAXALPHA(51, 68, 84));
 
     for (size_t row = 0; row < VISIBLE_ROWS; row++) {
