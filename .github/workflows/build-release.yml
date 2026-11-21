@@ -1,0 +1,59 @@
+name: Build and publish latest
+
+on:
+  push:
+    branches: [kaihen]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: latest-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:20260219
+    steps:
+      - name: Check out kaihen
+        uses: actions/checkout@v4
+
+      - name: Install Ounce devkit and FreeType
+        shell: bash
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ouncebrew/ounce-devkit/main/install.sh -o /tmp/ounce-install.sh
+          sh /tmp/ounce-install.sh
+          dkp-pacman -Sy --needed --noconfirm switch-freetype
+
+      - name: Build date-versioned NRO and package SD layout
+        id: build
+        shell: bash
+        run: |
+          version="$(date -u +%F)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          make clean
+          make APP_VERSION="$version"
+          mkdir -p package/switch
+          cp reset-launch-version.nro package/switch/reset-launch-version.nro
+          (cd package && zip -q -r ../dist.zip switch)
+
+      - name: Move latest tag to this build
+        shell: bash
+        run: |
+          git tag --force latest "$GITHUB_SHA"
+          git push --force origin refs/tags/latest
+
+      - name: Update Latest Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          target_commitish: ${{ github.sha }}
+          token: ${{ github.token }}
+          name: Latest Release
+          body: "Latest kaiHEN build. App version: ${{ steps.build.outputs.version }} (UTC compilation date)."
+          files: dist.zip
+          overwrite_files: true
+          fail_on_unmatched_files: true
+          make_latest: true
